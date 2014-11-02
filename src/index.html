@@ -11,14 +11,20 @@
     <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
     <script type="text/javascript" src="<%= file %>"></script><% }); %>
 
+    <script>
+        document.addEventListener('deviceready', function onDeviceReady() {
+            angular.bootstrap(document, ['app']);
+        }, false);
+    </script>
+    <script type="text/javascript" src="cordova.js"></script>
 </head>
 <body>
-<headroom class="header--fixed top-header" classes='{"initial":"animated","pinned":"fadeInDown","unpinned":"fadeOutUp","top":"headroom--top","notTop":"headroom--not-top"}'>
+<headroom offset="50" class="header--fixed top-header" classes='{"initial":"animated","pinned":"fadeInDown","unpinned":"fadeOutUp","top":"headroom--top","notTop":"headroom--not-top"}'>
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
                 <div class="pull-left title">
-                    Event tracker
+                    <a href="#events/total">Event tracker</a>
                 </div>
                 <div class="pull-right">
                     <a href="#events/add" class="btn btn-link addEvent">+</a>
@@ -30,5 +36,7 @@
 <div class="ui-view-container">
     <div ui-view></div>
 </div>
+
+
 </body>
 </html>

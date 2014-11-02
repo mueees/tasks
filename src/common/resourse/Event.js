@@ -254,6 +254,13 @@ angular.module('resources.event').factory('EventModel', [
             });
         };
 
+        Event.remove = function(id, successcb, errorcb){
+            var deferred = $q.defer();
+            var _this = this;
+            var sql = "DELETE FROM " + tableName + " WHERE id='" + id + "'";
+            return Event.query(sql, [], successcb, errorcb);
+        };
+
         Event.prototype.parse = function(data){
             if(data.date_create && angular.isString(data.date_create)){
                 data.date_create = new Date(data.date_create);

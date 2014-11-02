@@ -1,6 +1,6 @@
 <div class="events-list">
     <ul>
-        <li ng-repeat="event in events" class="event" task-click hm-hold="hold($event, event.id)">
+        <li ng-repeat="event in events" class="event" task-click ng-swipe-left="leftSwipe()" hm-hold="hold($event, event.id)">
             <h4 class="title">{{event.title}}</h4>
 
             <div ng-hide="isHidden" class="description">
@@ -8,6 +8,15 @@
             </div>
             <div class="meta">
                 <span>type: {{event.repeats}}</span>
+            </div>
+            <div class="clearfix" ng-hide="isDeleteHidden">
+                <br/>
+                <div class="pull-right">
+                    <button class="btn btn-xs" ng-click="isDeleteHidden = true">Cancel</button>
+                </div>
+                <div class="pull-left">
+                    <button class="btn btn-danger btn-xs" ng-click="deleteHandler($event, event.id)">Delete</button>
+                </div>
             </div>
         </li>
     </ul>

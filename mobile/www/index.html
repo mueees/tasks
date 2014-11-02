@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html ng-app="app" ng-controller="AppCtrl">
+<head>
+    <title>Some titles</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- compiled CSS -->
+    <link rel="stylesheet" type="text/css" href="assets/ngbp-0.3.2.css" />
+
+    <!-- compiled JavaScript -->
+    <script type="text/javascript" src="assets/ngbp-0.3.2.js"></script>
+
+    <script>
+        document.addEventListener('deviceready', function onDeviceReady() {
+            angular.bootstrap(document, ['app']);
+        }, false);
+    </script>
+    <script type="text/javascript" src="cordova.js"></script>
+</head>
+<body>
+<headroom offset="50" class="header--fixed top-header" classes='{"initial":"animated","pinned":"fadeInDown","unpinned":"fadeOutUp","top":"headroom--top","notTop":"headroom--not-top"}'>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pull-left title">
+                    <a href="#events/total">Event tracker</a>
+                </div>
+                <div class="pull-right">
+                    <a href="#events/add" class="btn btn-link addEvent">+</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</headroom>
+<div class="ui-view-container">
+    <div ui-view></div>
+</div>
+
+
+</body>
+</html>
