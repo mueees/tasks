@@ -1,0 +1,7 @@
+<div class="date-title">
+    <span class="date">
+        <strong>{{description}}</strong>
+        {{day.date | date:'EEE, MMM dd' }}
+        <strong>({{day.events.length}})</strong></span>
+</div>
+<event-list events="day.events"></event-list>

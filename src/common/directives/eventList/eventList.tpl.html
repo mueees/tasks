@@ -1,0 +1,14 @@
+<div class="events-list">
+    <ul>
+        <li ng-repeat="event in events" class="event" task-click hm-hold="hold($event, event.id)">
+            <h4 class="title">{{event.title}}</h4>
+
+            <div ng-hide="isHidden" class="description">
+                <p class="">{{event.description}}</p>
+            </div>
+            <div class="meta">
+                <span>type: {{event.repeats}}</span>
+            </div>
+        </li>
+    </ul>
+</div>
