@@ -1,0 +1,149 @@
+@import "import/reset.styl";
+@import "import/animate.styl";
+@import "import/example.styl";
+
+//rewrite bootstrap
+.nopadding
+  padding 0 !important
+  margin 0 !important
+
+
+body
+  background #F1F1F1
+  font-size 14px
+  padding-top 40px
+
+h1
+  font-size 24px
+  font-weight normal
+  margin 10px 0 15px
+
+
+/*HEADER*/
+.header--fixed
+  position: fixed;
+  z-index: 10;
+  right: 0;
+  left: 0;
+  top: 0;
+
+.top-header
+  height 40px
+  background white
+  .title
+    margin-top 11px
+
+/*END HEADAER*/
+
+.form-group
+  &.label-block
+    label
+      display block
+      font-size 14px
+      margin-bottom 10px
+
+.date-title
+  padding 5px
+  font-size 12px
+  .date
+    color rgb(87, 87, 87)
+
+.events-list
+  .event
+    background #fff
+    padding 15px 10px
+    border-bottom 1px solid lightgrey
+
+    .meta
+      color rgb(126, 126, 126)
+      font-size 12px
+      margin 6px 0 0
+
+    .title
+      font-size 16px
+      margin-bottom 5px
+
+.page-header
+  margin 15px 0 7px
+  padding-bottom 2px
+  border none
+
+.event-wrapper
+  border none
+  border-bottom 1px solid silver
+  margin-bottom 1px
+  border-radius 0 !important
+
+  &:last-child
+    border-bottom none
+
+.task
+  &.done-status
+    .list-group-item-heading
+      text-decoration: line-through;
+
+/*animate ui view*/
+.ui-view-container
+  position: relative;
+
+.slideInDown.ng-hide-add
+  animation fadeOut 1s  linear
+  -webkit-animation: fadeOut 1s linear
+
+
+[ui-view].ng-enter, [ui-view].ng-leave
+  position: absolute;
+  left: 0;
+  right: 0;
+  -webkit-transition:all .5s ease-in-out;
+  -moz-transition:all .5s ease-in-out;
+  -o-transition:all .5s ease-in-out;
+  transition:all .5s ease-in-out;
+
+
+[ui-view].ng-enter
+  opacity: 0;
+  -webkit-transform:scale3d(0.5, 0.5, 0.5);
+  -moz-transform:scale3d(0.5, 0.5, 0.5);
+  transform:scale3d(0.5, 0.5, 0.5);
+
+
+[ui-view].ng-enter-active
+  opacity: 1;
+  -webkit-transform:scale3d(1, 1, 1);
+  -moz-transform:scale3d(1, 1, 1);
+  transform:scale3d(1, 1, 1);
+
+
+[ui-view].ng-leave
+  opacity: 1;
+  -webkit-transform:translate3d(0, 0, 0);
+  -moz-transform:translate3d(0, 0, 0);
+  transform:translate3d(0, 0, 0);
+
+
+[ui-view].ng-leave-active
+  opacity: 0;
+  -webkit-transform:translate3d(100px, 0, 0);
+  -moz-transform:translate3d(100px, 0, 0);
+  transform:translate3d(100px, 0, 0);
+
+  /*end animate ui view*/
+
+.description.ng-hide-add
+  animation-duration: 0.2s;
+  -webkit-animation-duration: 0.2s;
+  -webkit-animation-name: fadeOutUp;
+  animation-name: fadeOutUp;
+  -webkit-transform-origin: center bottom;
+  -ms-transform-origin: center bottom;
+  transform-origin: center bottom;
+
+.description.ng-hide-remove
+  animation-duration: 0.2s;
+  -webkit-animation-duration: 0.2s;
+  -webkit-animation-name: fadeInDown;
+  animation-name: fadeInDown;
+  -webkit-transform-origin: center bottom;
+  -ms-transform-origin: center bottom;
+  transform-origin: center bottom;
