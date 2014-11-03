@@ -254,6 +254,19 @@ angular.module('resources.event').factory('EventModel', [
             });
         };
 
+        Event.getMonth = function(d, successcb, errorcb){
+
+            var start = new Date(d);
+            var date = {
+                start: start.setDay()
+            };
+
+            return Event.getByPeriod({
+                start: websqlUtil.convertDateToDatetime(date.start, 'yyyy-MM-dd HH:mm:ss'),
+                end: websqlUtil.convertDateToDatetime(date.end, 'yyyy-MM-dd HH:mm:ss')
+            });
+        };
+
         Event.remove = function(id, successcb, errorcb){
             var deferred = $q.defer();
             var _this = this;

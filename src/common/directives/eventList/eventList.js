@@ -28,7 +28,6 @@ angular.module('app.directives.eventList', [
 
                 scope.leftSwipe = function(event, eventId){
                     scope.isDeleteHidden = false;
-
                 };
 
                 scope.deleteHandler = function(event, eventId){
