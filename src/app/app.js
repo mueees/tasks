@@ -27,6 +27,16 @@ var app = angular.module( 'app', [
         }
     }])
 
-    .controller( 'AppCtrl', ['$scope', function($scope){
-
+    .constant('SWIPE_STATE', {
+        events_total: {
+            right: 'events_calendar'
+        },
+        events_calendar: {
+            right: 'events_total'
+        }
+    })
+    .controller( 'AppCtrl', ['$scope', 'SwipeChangeUrl', function($scope, SwipeChangeUrl){
+        $scope.swipeLeft = SwipeChangeUrl.swipeLeft;
+        $scope.swipeRight = SwipeChangeUrl.swipeRight;
     }]);
+

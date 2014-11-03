@@ -255,10 +255,12 @@ angular.module('resources.event').factory('EventModel', [
         };
 
         Event.getMonth = function(d, successcb, errorcb){
+            var start = new Date(d.getFullYear(), d.getMonth(), 1);
+            var end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
 
-            var start = new Date(d);
             var date = {
-                start: start.setDay()
+                start: start,
+                end: end
             };
 
             return Event.getByPeriod({
@@ -268,8 +270,6 @@ angular.module('resources.event').factory('EventModel', [
         };
 
         Event.remove = function(id, successcb, errorcb){
-            var deferred = $q.defer();
-            var _this = this;
             var sql = "DELETE FROM " + tableName + " WHERE id='" + id + "'";
             return Event.query(sql, [], successcb, errorcb);
         };

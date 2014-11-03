@@ -33,8 +33,5 @@ angular.module('app.events.total', [
     }])
     .controller('EventsTotalCtrl', ['$scope', '$location', function($scope, $location){
 
-        $scope.swipeLeft = function(){
-            $location.url('/events/add');
-        };
 
     }]);

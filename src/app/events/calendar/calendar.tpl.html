@@ -1,6 +1,10 @@
-<div ng-controller="EventsCalendarCtrl" class="container-fluid">
-    <h1>Event calendar</h1>
-    {{data.date}}
+<div ng-controller="EventsCalendarCtrl" >
     <calendar date='data.date'></calendar>
+    <div ng-repeat="day in data.eventsCollections">
+        <event-list-with-date no-events-hide="true" day="day"></event-list-with-date>
+    </div>
 
+    <div ng-if="isNoEvents()">
+        No events
+    </div>
 </div>

@@ -1,13 +1,11 @@
-<div class="calendar">
-    <div class="row">
-        <div class="col-xs-3">
-            <button ng-click="prev()" class="btn">Prev</button>
-        </div>
-        <div class="col-xs-6 title">
-            {{date | date : 'MMMM yyyy'}}
-        </div>
-        <div class="col-xs-3">
-            <button ng-click="next()" class="btn">Next</button>
-        </div>
+<div class="calendar clearfix">
+    <div class="pull-left">
+        <button ng-click="prev()" class="btn">Prev</button>
+    </div>
+    <div class="pull-right">
+        <button ng-click="next()" class="btn">Next</button>
+    </div>
+    <div class="title">
+        {{date | date : 'MMMM yyyy'}}
     </div>
 </div>

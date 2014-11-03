@@ -47,10 +47,28 @@ angular.module('app.services', [
         };
     }
 
-
     return {
         getToday: getToday,
         getWeek: getWeek,
         getTomorrow: getTomorrow
     };
-});
+
+}).factory('SwipeChangeUrl', ['$state', 'SWIPE_STATE', function($state, SWIPE_STATE){
+    function swipeLeft(){
+        var currentState = $state.current.name;
+        if( SWIPE_STATE[currentState] && SWIPE_STATE[currentState].left ){
+            $state.go(SWIPE_STATE[currentState].left);
+        }
+    }
+    function swipeRight(){
+        var currentState = $state.current.name;
+        if( SWIPE_STATE[currentState] && SWIPE_STATE[currentState].right ){
+            $state.go(SWIPE_STATE[currentState].right);
+        }
+    }
+
+    return {
+        swipeLeft: swipeLeft,
+        swipeRight: swipeRight
+    };
+}]);

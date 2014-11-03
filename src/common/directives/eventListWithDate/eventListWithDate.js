@@ -5,7 +5,8 @@ angular.module('app.directives.eventListWithDate', [
         return {
             restrict: "E",
             scope: {
-                day: "=day"
+                day: "=day",
+                noEventsHide: "=noEventsHide"
             },
             templateUrl: "directives/eventListWithDate/eventListWithDate.tpl.html",
             link: function(scope){
@@ -17,6 +18,16 @@ angular.module('app.directives.eventListWithDate', [
                 if( $filter('date')(date.setDate(date.getDate()+1), 'yyyy-MM-dd') == $filter('date')(scope.day.date, 'yyyy-MM-dd') ){
                     scope.description = 'Tomorrow';
                 }
+
+                scope.isShow = function(){
+                    var result = true;
+                    if(scope.noEventsHide){
+                        if( !scope.day.events.length ){
+                            result = false;
+                        }
+                    }
+                    return result;
+                };
             }
         };
     }]);

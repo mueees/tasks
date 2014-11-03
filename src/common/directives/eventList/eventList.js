@@ -26,13 +26,14 @@ angular.module('app.directives.eventList', [
                     $location.url('/events/edit/' + id);
                 };
 
-                scope.leftSwipe = function(event, eventId){
+                scope.leftSwipe = function(event){
+                    event.stopPropagation();
                     scope.isDeleteHidden = false;
                 };
 
                 scope.deleteHandler = function(event, eventId){
                     EventModel.remove(eventId).then(function(){
-                        $location.url('/events/total');
+                        //$location.url('/events/total');
                         var idx;
                         _.find(scope.events, function(event, index){
                             if(event.id == eventId){

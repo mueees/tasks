@@ -1,5 +1,5 @@
 /**
- * ngbp - v0.3.2 - 2014-11-02
+ * ngbp - v0.3.2 - 2014-11-03
  * https://github.com/ngbp/ngbp
  *
  * Copyright (c) 2014 Josh David Miller
@@ -27074,9 +27074,15 @@ var app = angular.module('app', [
         });
       }
     }
-  ]).controller('AppCtrl', [
+  ]).constant('SWIPE_STATE', {
+    events_total: { right: 'events_calendar' },
+    events_calendar: { right: 'events_total' }
+  }).controller('AppCtrl', [
     '$scope',
-    function ($scope) {
+    'SwipeChangeUrl',
+    function ($scope, SwipeChangeUrl) {
+      $scope.swipeLeft = SwipeChangeUrl.swipeLeft;
+      $scope.swipeRight = SwipeChangeUrl.swipeRight;
     }
   ]);
 angular.module('app.events.add', ['ui.router']).config([
@@ -27153,6 +27159,40 @@ angular.module('app.events.add', ['ui.router']).config([
     };
   }
 ]);
+angular.module('app.events.calendar', ['ui.router']).config([
+  '$stateProvider',
+  '$urlRouterProvider',
+  function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise('/events/calendar');
+    $stateProvider.state('events_calendar', {
+      url: '/events/calendar',
+      templateUrl: 'events/calendar/calendar.tpl.html'
+    });
+  }
+]).controller('EventsCalendarCtrl', [
+  '$scope',
+  '$location',
+  'EventModel',
+  'websqlUtil',
+  function ($scope, $location, EventModel, websqlUtil) {
+    $scope.data = {};
+    $scope.data.date = new Date();
+    $scope.$watch('data.date', function () {
+      EventModel.getMonth($scope.data.date).then(function (events) {
+        $scope.data.eventsCollections = websqlUtil.eventsByPeriodToObjects(events);
+      });
+    }, true);
+    $scope.isNoEvents = function () {
+      var result = true;
+      _.find($scope.data.eventsCollections, function (day) {
+        if (result && day.events.length) {
+          result = false;
+        }
+      });
+      return result;
+    };
+  }
+]);
 angular.module('app.events.edit', ['ui.router']).config([
   '$stateProvider',
   '$urlRouterProvider',
@@ -27203,6 +27243,7 @@ angular.module('app.events.edit', ['ui.router']).config([
 angular.module('app.events', [
   'app.events.total',
   'app.events.edit',
+  'app.events.calendar',
   'app.events.add'
 ]);
 angular.module('app.events.total', ['ui.router']).config([
@@ -27236,9 +27277,25 @@ angular.module('app.events.total', ['ui.router']).config([
   }
 ]).controller('EventsTotalCtrl', [
   '$scope',
-  function ($scope, today) {
+  '$location',
+  function ($scope, $location) {
   }
 ]);
+angular.module('app.directives.calendar', ['angular-gestures']).directive('calendar', function () {
+  return {
+    restrict: 'E',
+    scope: { date: '=date' },
+    templateUrl: 'directives/calendar/calendar.tpl.html',
+    link: function (scope, element, attrs) {
+      scope.prev = function () {
+        scope.date.setMonth(scope.date.getMonth() - 1);
+      };
+      scope.next = function () {
+        scope.date.setMonth(scope.date.getMonth() + 1);
+      };
+    }
+  };
+});
 angular.module('app.directives.dateFix', []).directive('dateFix', function () {
   return {
     restrict: 'A',
@@ -27254,6 +27311,7 @@ angular.module('app.directives.dateFix', []).directive('dateFix', function () {
 });
 angular.module('app.directives', [
   'app.directives.eventList',
+  'app.directives.calendar',
   'app.directives.eventListWithDate',
   'app.directives.showError'
 ]);
@@ -27280,12 +27338,12 @@ angular.module('app.directives.eventList', ['angular-gestures']).directive('even
           }
           $location.url('/events/edit/' + id);
         };
-        scope.leftSwipe = function (event, eventId) {
+        scope.leftSwipe = function (event) {
+          event.stopPropagation();
           scope.isDeleteHidden = false;
         };
         scope.deleteHandler = function (event, eventId) {
           EventModel.remove(eventId).then(function () {
-            $location.url('/events/total');
             var idx;
             _.find(scope.events, function (event, index) {
               if (event.id == eventId) {
@@ -27310,7 +27368,10 @@ angular.module('app.directives.eventListWithDate', ['angular-gestures']).directi
   function ($filter) {
     return {
       restrict: 'E',
-      scope: { day: '=day' },
+      scope: {
+        day: '=day',
+        noEventsHide: '=noEventsHide'
+      },
       templateUrl: 'directives/eventListWithDate/eventListWithDate.tpl.html',
       link: function (scope) {
         var date = new Date();
@@ -27320,6 +27381,15 @@ angular.module('app.directives.eventListWithDate', ['angular-gestures']).directi
         if ($filter('date')(date.setDate(date.getDate() + 1), 'yyyy-MM-dd') == $filter('date')(scope.day.date, 'yyyy-MM-dd')) {
           scope.description = 'Tomorrow';
         }
+        scope.isShow = function () {
+          var result = true;
+          if (scope.noEventsHide) {
+            if (!scope.day.events.length) {
+              result = false;
+            }
+          }
+          return result;
+        };
       }
     };
   }
@@ -27550,9 +27620,19 @@ angular.module('resources.event').factory('EventModel', [
         end: websqlUtil.convertDateToDatetime(date.end, 'yyyy-MM-dd HH:mm:ss')
       });
     };
+    Event.getMonth = function (d, successcb, errorcb) {
+      var start = new Date(d.getFullYear(), d.getMonth(), 1);
+      var end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+      var date = {
+          start: start,
+          end: end
+        };
+      return Event.getByPeriod({
+        start: websqlUtil.convertDateToDatetime(date.start, 'yyyy-MM-dd HH:mm:ss'),
+        end: websqlUtil.convertDateToDatetime(date.end, 'yyyy-MM-dd HH:mm:ss')
+      });
+    };
     Event.remove = function (id, successcb, errorcb) {
-      var deferred = $q.defer();
-      var _this = this;
       var sql = 'DELETE FROM ' + tableName + ' WHERE id=\'' + id + '\'';
       return Event.query(sql, [], successcb, errorcb);
     };
@@ -27620,7 +27700,28 @@ angular.module('app.services', []).factory('dateHelper', function () {
     getWeek: getWeek,
     getTomorrow: getTomorrow
   };
-});
+}).factory('SwipeChangeUrl', [
+  '$state',
+  'SWIPE_STATE',
+  function ($state, SWIPE_STATE) {
+    function swipeLeft() {
+      var currentState = $state.current.name;
+      if (SWIPE_STATE[currentState] && SWIPE_STATE[currentState].left) {
+        $state.go(SWIPE_STATE[currentState].left);
+      }
+    }
+    function swipeRight() {
+      var currentState = $state.current.name;
+      if (SWIPE_STATE[currentState] && SWIPE_STATE[currentState].right) {
+        $state.go(SWIPE_STATE[currentState].right);
+      }
+    }
+    return {
+      swipeLeft: swipeLeft,
+      swipeRight: swipeRight
+    };
+  }
+]);
 angular.module('websql', []).constant('DB_TABLES', [{
     name: 'event',
     columns: [
@@ -27947,7 +28048,7 @@ angular.module('websql', []).constant('DB_TABLES', [{
     return WebSqlResourceFactory;
   }
 ]);
-angular.module('templates-app', ['events/add/add.tpl.html', 'events/edit/edit.tpl.html', 'events/total/total.tpl.html']);
+angular.module('templates-app', ['events/add/add.tpl.html', 'events/calendar/calendar.tpl.html', 'events/edit/edit.tpl.html', 'events/total/total.tpl.html']);
 
 angular.module("events/add/add.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("events/add/add.tpl.html",
@@ -28015,6 +28116,20 @@ angular.module("events/add/add.tpl.html", []).run(["$templateCache", function($t
     "\n" +
     "</div>\n" +
     "");
+}]);
+
+angular.module("events/calendar/calendar.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("events/calendar/calendar.tpl.html",
+    "<div ng-controller=\"EventsCalendarCtrl\" >\n" +
+    "    <calendar date='data.date'></calendar>\n" +
+    "    <div ng-repeat=\"day in data.eventsCollections\">\n" +
+    "        <event-list-with-date no-events-hide=\"true\" day=\"day\"></event-list-with-date>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"isNoEvents()\">\n" +
+    "        No events\n" +
+    "    </div>\n" +
+    "</div>");
 }]);
 
 angular.module("events/edit/edit.tpl.html", []).run(["$templateCache", function($templateCache) {
@@ -28091,36 +28206,44 @@ angular.module("events/total/total.tpl.html", []).run(["$templateCache", functio
     "<div ng-controller=\"EventsTotalCtrl\">\n" +
     "    <event-list-with-date day=\"today\"></event-list-with-date>\n" +
     "    <event-list-with-date day=\"tomorrow\"></event-list-with-date>\n" +
-    "\n" +
-    "    <!--<div ng-repeat=\"day in week\">\n" +
-    "        <event-list-with-date day=\"day\"></event-list-with-date>\n" +
-    "    </div>-->\n" +
     "</div>");
 }]);
 
-angular.module('templates-common', ['directives/eventList/eventList.tpl.html', 'directives/eventListWithDate/eventListWithDate.tpl.html']);
+angular.module('templates-common', ['directives/calendar/calendar.tpl.html', 'directives/eventList/eventList.tpl.html', 'directives/eventListWithDate/eventListWithDate.tpl.html']);
+
+angular.module("directives/calendar/calendar.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("directives/calendar/calendar.tpl.html",
+    "<div class=\"calendar clearfix\">\n" +
+    "    <div class=\"pull-left\">\n" +
+    "        <button ng-click=\"prev()\" class=\"btn\">Prev</button>\n" +
+    "    </div>\n" +
+    "    <div class=\"pull-right\">\n" +
+    "        <button ng-click=\"next()\" class=\"btn\">Next</button>\n" +
+    "    </div>\n" +
+    "    <div class=\"title\">\n" +
+    "        {{date | date : 'MMMM yyyy'}}\n" +
+    "    </div>\n" +
+    "</div>");
+}]);
 
 angular.module("directives/eventList/eventList.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/eventList/eventList.tpl.html",
     "<div class=\"events-list\">\n" +
     "    <ul>\n" +
-    "        <li ng-repeat=\"event in events\" class=\"event\" task-click ng-swipe-left=\"leftSwipe()\" hm-hold=\"hold($event, event.id)\">\n" +
-    "            <h4 class=\"title\">{{event.title}}</h4>\n" +
+    "        <li ng-repeat=\"event in events\" class=\"event\" task-click ng-swipe-left=\"leftSwipe($event)\" hm-hold=\"hold($event, event.id)\">\n" +
+    "            <div class=\"content\">\n" +
+    "                <h4 class=\"title\">{{event.title}}</h4>\n" +
     "\n" +
-    "            <div ng-hide=\"isHidden\" class=\"description\">\n" +
-    "                <p class=\"\">{{event.description}}</p>\n" +
-    "            </div>\n" +
-    "            <div class=\"meta\">\n" +
-    "                <span>type: {{event.repeats}}</span>\n" +
+    "                <div ng-hide=\"isHidden\" class=\"description\">\n" +
+    "                    <p class=\"\">{{event.description}}</p>\n" +
+    "                </div>\n" +
+    "                <div class=\"meta\">\n" +
+    "                    <span>type: {{event.repeats}}</span>\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "            <div class=\"clearfix\" ng-hide=\"isDeleteHidden\">\n" +
-    "                <br/>\n" +
-    "                <div class=\"pull-right\">\n" +
-    "                    <button class=\"btn btn-xs\" ng-click=\"isDeleteHidden = true\">Cancel</button>\n" +
-    "                </div>\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-danger btn-xs\" ng-click=\"deleteHandler($event, event.id)\">Delete</button>\n" +
-    "                </div>\n" +
+    "                <button class=\"btn cancel pull-right\" ng-click=\"isDeleteHidden = true\">Cancel</button>\n" +
+    "                <button class=\"btn btn-danger delete pull-left\" ng-click=\"deleteHandler($event, event.id)\">Delete</button>\n" +
     "            </div>\n" +
     "        </li>\n" +
     "    </ul>\n" +
@@ -28129,7 +28252,7 @@ angular.module("directives/eventList/eventList.tpl.html", []).run(["$templateCac
 
 angular.module("directives/eventListWithDate/eventListWithDate.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/eventListWithDate/eventListWithDate.tpl.html",
-    "<div class=\"date-title\">\n" +
+    "<div class=\"date-title\" ng-if=\"isShow()\">\n" +
     "    <span class=\"date\">\n" +
     "        <strong>{{description}}</strong>\n" +
     "        {{day.date | date:'EEE, MMM dd' }}\n" +

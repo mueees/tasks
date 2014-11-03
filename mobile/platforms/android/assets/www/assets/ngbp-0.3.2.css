@@ -7822,13 +7822,17 @@ h1{font-size:24px;font-weight:normal;margin:10px 0 15px}
 .form-group.label-block label{display:block;font-size:14px;margin-bottom:10px}
 .date-title{padding:5px;font-size:12px;}
 .date-title .date{color:#575757}
-.events-list .event{background:#fff;padding:15px 10px;border-bottom:1px solid #d3d3d3;}
+.events-list .event{background:#fff;border-bottom:1px solid #d3d3d3;}
+.events-list .event .content{padding:15px 10px}
 .events-list .event .meta{color:#7e7e7e;font-size:12px;margin:6px 0 0}
+.events-list .event .btn{width:50%}
 .events-list .event .title{font-size:16px;margin-bottom:5px}
 .page-header{margin:15px 0 7px;padding-bottom:2px;border:none}
 .event-wrapper{border:none;border-bottom:1px solid #c0c0c0;margin-bottom:1px;border-radius:0 !important;}
 .event-wrapper:last-child{border-bottom:none}
 .task.done-status .list-group-item-heading{text-decoration:line-through}
+.calendar{margin-bottom:10px;}
+.calendar .title{text-align:center;padding:13px 0 0 0}
 .ui-view-container{position:relative}
 .slideInDown.ng-hide-add{animation:fadeOut 1s linear;-webkit-animation:fadeOut 1s linear}
 [ui-view].ng-enter,[ui-view].ng-leave{position:absolute;left:0;right:0;-webkit-transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;transition:all .2s ease-in-out}

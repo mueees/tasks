@@ -1,22 +1,19 @@
 <div class="events-list">
     <ul>
-        <li ng-repeat="event in events" class="event" task-click ng-swipe-left="leftSwipe()" hm-hold="hold($event, event.id)">
-            <h4 class="title">{{event.title}}</h4>
+        <li ng-repeat="event in events" class="event" task-click ng-swipe-left="leftSwipe($event)" hm-hold="hold($event, event.id)">
+            <div class="content">
+                <h4 class="title">{{event.title}}</h4>
 
-            <div ng-hide="isHidden" class="description">
-                <p class="">{{event.description}}</p>
-            </div>
-            <div class="meta">
-                <span>type: {{event.repeats}}</span>
+                <div ng-hide="isHidden" class="description">
+                    <p class="">{{event.description}}</p>
+                </div>
+                <div class="meta">
+                    <span>type: {{event.repeats}}</span>
+                </div>
             </div>
             <div class="clearfix" ng-hide="isDeleteHidden">
-                <br/>
-                <div class="pull-right">
-                    <button class="btn btn-xs" ng-click="isDeleteHidden = true">Cancel</button>
-                </div>
-                <div class="pull-left">
-                    <button class="btn btn-danger btn-xs" ng-click="deleteHandler($event, event.id)">Delete</button>
-                </div>
+                <button class="btn cancel pull-right" ng-click="isDeleteHidden = true">Cancel</button>
+                <button class="btn btn-danger delete pull-left" ng-click="deleteHandler($event, event.id)">Delete</button>
             </div>
         </li>
     </ul>
