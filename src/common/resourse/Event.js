@@ -225,9 +225,16 @@ angular.module('resources.event').factory('EventModel', [
             return result;
         };
 
+        Event.getTodayAndTomorrow = function(){
+            var date = dateHelper.getTodayAndTomorrow();
+            return Event.getByPeriod({
+                start: websqlUtil.convertDateToDatetime(date.start, 'yyyy-MM-dd HH:mm:ss'),
+                end: websqlUtil.convertDateToDatetime(date.end, 'yyyy-MM-dd HH:mm:ss')
+            });
+        };
+
         Event.getToday = function(successcb, errorcb){
             var date = dateHelper.getToday();
-
             return Event.getByPeriod({
                 start: websqlUtil.convertDateToDatetime(date.start, 'yyyy-MM-dd HH:mm:ss'),
                 end: websqlUtil.convertDateToDatetime(date.end, 'yyyy-MM-dd HH:mm:ss')
@@ -245,9 +252,7 @@ angular.module('resources.event').factory('EventModel', [
         };
 
         Event.getWeek = function(successcb, errorcb){
-
             var date = dateHelper.getWeek();
-
             return Event.getByPeriod({
                 start: websqlUtil.convertDateToDatetime(date.start, 'yyyy-MM-dd HH:mm:ss'),
                 end: websqlUtil.convertDateToDatetime(date.end, 'yyyy-MM-dd HH:mm:ss')

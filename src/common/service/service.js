@@ -47,10 +47,28 @@ angular.module('app.services', [
         };
     }
 
+    function getTodayAndTomorrow(){
+        var start = new Date();
+        var end = new Date();
+
+        start.setHours(0);
+        start.setMinutes(0);
+
+        end.setDate(end.getDate()+1);
+        end.setHours(23);
+        end.setMinutes(59);
+
+        return {
+            start: start,
+            end: end
+        };
+    }
+
     return {
         getToday: getToday,
         getWeek: getWeek,
-        getTomorrow: getTomorrow
+        getTomorrow: getTomorrow,
+        getTodayAndTomorrow: getTodayAndTomorrow
     };
 
 }).factory('SwipeChangeUrl', ['$state', 'SWIPE_STATE', function($state, SWIPE_STATE){

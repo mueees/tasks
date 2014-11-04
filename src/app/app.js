@@ -36,7 +36,7 @@ var app = angular.module( 'app', [
         }
     })
     .controller( 'AppCtrl', ['$scope', 'SwipeChangeUrl', function($scope, SwipeChangeUrl){
-        $scope.swipeLeft = SwipeChangeUrl.swipeLeft;
-        $scope.swipeRight = SwipeChangeUrl.swipeRight;
+        /*$scope.swipeLeft = SwipeChangeUrl.swipeLeft;
+        $scope.swipeRight = SwipeChangeUrl.swipeRight;*/
     }]);
 

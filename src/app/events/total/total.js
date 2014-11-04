@@ -7,31 +7,51 @@ angular.module('app.events.total', [
         $stateProvider
             .state('events_total', {
                 url: '/events/total',
-                templateUrl: 'events/total/total.tpl.html',
-                resolve: {
-                    today: function (EventModel) {
-                        return EventModel.getToday();
-                    },
-                    tomorrow: function(EventModel){
-                        return EventModel.getTomorrow();
-                    },
-                    week: function(EventModel){
-                        return EventModel.getWeek();
-                    }
-                },
-                controller: function ($scope, today, tomorrow, week, websqlUtil) {
-                    $scope.todayRow = today[0];
-                    $scope.today = websqlUtil.eventsByPeriodToObjects(today)[0];
-
-                    $scope.tomorrowRow = tomorrow[0];
-                    $scope.tomorrow = websqlUtil.eventsByPeriodToObjects(tomorrow)[0];
-
-                    $scope.weekRow = week;
-                    $scope.week = websqlUtil.eventsByPeriodToObjects(week);
-                }
+                templateUrl: 'events/total/total.tpl.html'
             });
     }])
-    .controller('EventsTotalCtrl', ['$scope', '$location', function($scope, $location){
+    .controller('EventsTotalCtrl', ['$scope', '$location', 'EventModel', '$q', 'websqlUtil', '$timeout', function($scope, $location, EventModel, $q, websqlUtil, $timeout){
+        $scope.data = {};
+        $scope.data.date = new Date();
 
+        $scope.buttonsData = {
+            active: 'Week',
+            buttons: [
+                {
+                    name: "Week"
+                },
+                {
+                    name: "Month"
+                }
+            ]
+        };
 
+        $scope.$watch('buttonsData.active', function(){
+            switch ($scope.buttonsData.active){
+                case "Week":
+                    $scope.events = [];
+                    EventModel.getWeek()
+                        .then(function(events){
+                            $scope.events = websqlUtil.eventsByPeriodToObjects(events);
+                        });
+                    break;
+            }
+        });
+
+        $scope.$watch('data.date', function(){
+            if( $scope.buttonsData.active != "Month" ) {
+                return;
+            }
+            EventModel.getMonth($scope.data.date).then(function(events){
+                $scope.events = websqlUtil.eventsByPeriodToObjects(events);
+            });
+        }, true);
+
+        $scope.isShowCalendar = function(){
+            if( $scope.buttonsData.active == 'Month' ){
+                return true;
+            }else{
+                return false;
+            }
+        };
     }]);

@@ -1,4 +1,9 @@
 <div ng-controller="EventsTotalCtrl">
-    <event-list-with-date day="today"></event-list-with-date>
-    <event-list-with-date day="tomorrow"></event-list-with-date>
+
+    <buttons-group buttons-data="buttonsData"></buttons-group>
+
+    <calendar ng-show="isShowCalendar()" date='data.date'></calendar>
+
+    <event-list-with-date no-events-hide="true" ng-repeat="day in events" day="day"></event-list-with-date>
+
 </div>
