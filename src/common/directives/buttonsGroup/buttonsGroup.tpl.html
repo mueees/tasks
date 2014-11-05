@@ -1,0 +1,5 @@
+<div class="btn-group btn-group-justified">
+    <div class="btn-group" ng-repeat="button in buttonsData.buttons" >
+        <button ng-click="buttonClick(button.name)" ng-class="{'active': isActive(button.name)}"  type="button" class=" btn btn-info">{{button.name}}</button>
+    </div>
+</div>
