@@ -53,18 +53,20 @@ angular.module('websql', [])
         size: 1024*1024*35 // 35 Mb
     })
 
-    .factory('websqldb', ['DB_CONFIG', '$q', function(DB_CONFIG, $q){
+    .factory('websqldb', ['DB_CONFIG', '$q', '$rootScope', function(DB_CONFIG, $q, $rootScope){
         var db = window.openDatabase(DB_CONFIG.name, DB_CONFIG.version, DB_CONFIG.description, DB_CONFIG.size);
         db.executeQuery = function(query, bindings){
             var deferred = $q.defer();
             var _this = this;
             bindings = typeof bindings !== 'undefined' ? bindings : [];
             this.transaction(function(transaction) {
+                $rootScope.$broadcast('querying');
                 transaction.executeSql(query, bindings, function(transaction, results) {
+                    $rootScope.$broadcast('queried');
                     results = _this.convertResult(results);
                     deferred.resolve(results);
                 }, function(transaction, error) {
-                    debugger;
+                    $rootScope.$broadcast('queried');
                     deferred.reject(error);
                 });
             });
@@ -78,7 +80,6 @@ angular.module('websql', [])
             }
             return data;
         };
-
         return db;
     }])
 

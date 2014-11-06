@@ -14,7 +14,7 @@
 
         <div show-error class="form-group">
             <label class="control-label" for="date">Date</label>
-            <input type="date" id="date"  value="{{event.date_start}}" ng-model="event.date_start" class="form-control"  required/>
+            <date-choose id="date" ng-model="event.date_start" ></date-choose>
         </div>
 
         <div class="form-group">
@@ -37,18 +37,15 @@
 
             <div ng-show="event.repeats == 'week'">
                 <div class="form-group label-block">
-
                     <label ng-repeat="repeatDay in event.repeatDays">
                         <input name="repeatOn[]" type="checkbox" value="repeatDay.day" ng-model="repeatDay.selected"/> {{repeatDay.name}}
                     </label>
-
                 </div>
-
             </div>
 
             <div class="form-group">
                 <label class="control-label" for="endDate">Ends</label>
-                <input type="date" id="endDate"  ng-model="event.date_end" value="{{event.date_end}}" class="form-control"/>
+                <date-choose id="endDate" ng-model="event.date_end" ></date-choose>
             </div>
 
         </div>
